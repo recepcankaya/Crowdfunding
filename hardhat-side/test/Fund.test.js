@@ -2,37 +2,26 @@ const { assert, expect } = require("chai");
 const { ethers, deployments } = require("hardhat");
 
 describe("Fund", function () {
-  let fundContract;
-  let timeContract;
-
-  const proposals = [{
-    id: 0,
-    description: "A Proposal",
-    deadline: 1000000,
-    yes: 0,
-    no: 0,
-    totalContribution: 0,
-    requestedContribution: 0,
-    numberOfVoters: 0,
-    contributors: 0,
-    caller: "0x000",
-    isContributionEnded: false
-  }];
+  let fundContractFactory, fundContract;
 
   beforeEach(async function () {
-    fundContract = await ethers.getContractFactory("Fund");
-    timeContract = await ethers.getContractFactory("Time");
-    await fundContract.deploy();
-    await timeContract.deploy();
+    fundContractFactory = await ethers.getContractFactory("Fund");
+    fundContract = await fundContractFactory.deploy();
   });
 
   describe("Create Proposal", function () {
-    it("Should retrieve the correct proposal from the proposals array", async function () {
-      // Define the proposalId and the proposals array
-      const proposalId = 0;
-      const proposal = proposals[proposalId];
+    it("Should get the proposalId at first", async function () {
+      const proposalId = await fundContract.proposalId();
+      const expectedId = "0";
+      assert.equal(proposalId.toString(), expectedId);
+    });
 
-      assert.equal(proposal.id, proposalId);
+    it("Should update propsalId by one after proposal created", async function () {
+      const txResponse = await fundContract.createProposal("This is a proposal");
+      await txResponse.wait(1);
+      const expectedId = "1";
+      const proposalId = await fundContract.proposalId();
+      assert.equal(proposalId.toString(), expectedId);
     });
   });
 });
