@@ -23,5 +23,16 @@ describe("Fund", function () {
       const proposalId = await fundContract.proposalId();
       assert.equal(proposalId.toString(), expectedId);
     });
+
+    it("Should create the proposal and get it from the mapping with the given description", async function () {
+      const firstProposal = await fundContract.createProposal("This is the first proposal");
+      await firstProposal.wait(1);
+      const secondProposal = await fundContract.createProposal("This is the second proposal");
+      await secondProposal.wait(1);
+      const proposal1 = await fundContract.proposals(0);
+      const proposal2 = await fundContract.proposals(1);
+      assert.equal(proposal1.description, "This is the first proposal");
+      assert.equal(proposal2.description, "This is the second proposal");
+    });
   });
 });
