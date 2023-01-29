@@ -2,11 +2,9 @@
 
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./Time.sol";
 
 contract Fund {
     using SafeMath for uint;
-    Time oracleTimestamp;
 
     struct Proposal {
         string description;
@@ -35,9 +33,8 @@ contract Fund {
     function createProposal(
         string memory _description
     ) public returns (uint256) {
-        oracleTimestamp = new Time();
         Proposal storage proposal = proposals[proposalId];
-        proposal.deadline = oracleTimestamp.getLatestTimeStamp() + 1 minutes;
+        proposal.deadline = block.timestamp + 1 minutes;
         proposal.isContributionEnded = false;
         proposal.caller = msg.sender;
         proposal.description = _description;
@@ -49,8 +46,7 @@ contract Fund {
 
     modifier activeProposal(uint256 proposalIndex) {
         require(
-            oracleTimestamp.getLatestTimeStamp() <
-                proposals[proposalIndex].deadline,
+            block.timestamp < proposals[proposalIndex].deadline,
             "This proposal does not accept any contribution"
         );
         _;
@@ -84,7 +80,7 @@ contract Fund {
 
     modifier timeRestrictionForContribution(uint256 endTime) {
         require(
-            oracleTimestamp.getLatestTimeStamp() < endTime,
+            block.timestamp < endTime,
             "You cannot contribute because the time has expired"
         );
         _;
@@ -111,9 +107,7 @@ contract Fund {
         payable
         onlyVoters(proposalIndex)
         preventOverFunding(proposalIndex)
-        timeRestrictionForContribution(
-            oracleTimestamp.getLatestTimeStamp() + 1 minutes
-        )
+        timeRestrictionForContribution(block.timestamp + 1 minutes)
     {
         Proposal storage proposal = proposals[proposalIndex];
         proposal.totalContribution += msg.value;
