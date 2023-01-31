@@ -31,10 +31,12 @@ contract Fund {
 
     // Create proposal
     function createProposal(
-        string memory _description
+        string memory _description,
+        uint256 _requestedContribution
     ) public returns (uint256) {
         Proposal storage proposal = proposals[proposalId];
         proposal.deadline = block.timestamp + 1 minutes;
+        proposal.requestedContribution = _requestedContribution;
         proposal.isContributionEnded = false;
         proposal.caller = msg.sender;
         proposal.description = _description;
@@ -48,15 +50,6 @@ contract Fund {
         require(
             block.timestamp < proposals[proposalIndex].deadline,
             "This proposal does not accept any vote"
-        );
-        _;
-    }
-
-    modifier preventOverFunding(uint256 proposalIndex) {
-        require(
-            proposals[proposalIndex].totalContribution <=
-                proposals[proposalIndex].requestedContribution.mul(11).div(10),
-            "You exceeded contribution limit"
         );
         _;
     }
@@ -110,7 +103,6 @@ contract Fund {
         public
         payable
         onlyVoters(proposalIndex)
-        preventOverFunding(proposalIndex)
         timeRestrictionForContribution(block.timestamp + 1 minutes)
     {
         Proposal storage proposal = proposals[proposalIndex];
@@ -121,7 +113,7 @@ contract Fund {
 
     function transferContributionToCreator(
         uint256 proposalIndex
-    ) public isProposalPassed(proposalIndex) {
+    ) public payable isProposalPassed(proposalIndex) {
         Proposal storage proposal = proposals[proposalIndex];
         require(proposal.isContributionEnded, "Contribution has not ended yet");
         require(address(this).balance != 0, "Contract balance is zero");
@@ -130,6 +122,10 @@ contract Fund {
             "The contract has insufficient balance"
         );
         payable(proposal.caller).transfer(proposal.totalContribution);
+    }
+
+    function contractBalance() public view returns (uint) {
+        return address(this).balance;
     }
 
     // Functions to receive Ether from contributors
