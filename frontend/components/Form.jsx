@@ -65,7 +65,7 @@ export default function Form() {
             </div>
           ) : null}
         </div>
-        <button className="w-1/4 mt-4 border-solid border border-violet-800 rounded-lg hover:bg-gradient-to-br from-orange-600 to-violet-700 hover:text-white">
+        <button className="w-1/4 mt-4 py-1.5 border-solid border border-violet-800 rounded-lg hover:bg-gradient-to-br from-orange-600 to-violet-700 hover:text-white">
           Submit
         </button>
       </div>
