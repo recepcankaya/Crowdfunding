@@ -49,12 +49,21 @@ describe("Fund", function () {
       YES: 1,
     };
 
-    it.only("Should vote on proposal", async function () {
+    it("Should vote on proposal", async function () {
       const theProposal = await fundContract.createProposal("Test proposal", 0);
       theProposal.wait(1);
       await fundContract.voteProposal(0, vote.YES);
       const proposal = await fundContract.proposals(0);
       assert.equal(proposal.yes.toString(), "1");
+    });
+
+    it.only("Should not allow the user to vote again", async function () {
+      const theProposal = await fundContract.createProposal("Test proposal", 0);
+      theProposal.wait(1);
+      await fundContract.voteProposal(0, vote.NO);
+      await expect(fundContract.voteProposal(0, vote.NO)).to.be.revertedWith(
+        "Since you voted, you cannot vote again"
+      );
     });
   });
 });
