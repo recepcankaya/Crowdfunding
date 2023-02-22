@@ -10,6 +10,11 @@ describe("Fund", function () {
     await fundContract.deployed();
   });
 
+  const vote = {
+    NO: 0,
+    YES: 1,
+  };
+
   describe("Create Proposal", function () {
     it("Should get the proposalId at first", async function () {
       const proposalId = await fundContract.proposalId();
@@ -51,11 +56,6 @@ describe("Fund", function () {
       const theProposal = await fundContract.createProposal("Test proposal", 0);
       theProposal.wait(1);
     });
-
-    const vote = {
-      NO: 0,
-      YES: 1,
-    };
 
     it("Should vote on proposal", async function () {
       await fundContract.voteProposal(0, vote.YES);
@@ -103,6 +103,49 @@ describe("Fund", function () {
       const proposal = await fundContract.proposals(0);
       assert.equal(proposal.totalContribution.toString(), contributionAmount);
       assert.equal(proposal.contributors.toString(), "1");
+    });
+  });
+
+  describe("Transfer Contribution To Creator", function () {
+    beforeEach(async function () {
+      const theProposal = await fundContract.createProposal("Test proposal", 0);
+      theProposal.wait(1);
+      await fundContract.voteProposal(0, vote.YES);
+      const [contributor] = await ethers.getSigners();
+      await fundContract
+        .connect(contributor)
+        .contributeToContract(0, { value: 1 });
+    });
+
+    it("Should finish the contribution", async function () {
+      const proposal = await fundContract.proposals(0);
+      assert.equal(proposal.isContributionEnded, true);
+    });
+
+    it("Should not be the zero balance of the contract", async function () {
+      const balance = await ethers.provider.getBalance(fundContract.address);
+      assert.notEqual(balance.toString(), "0");
+    });
+
+    it("Should be at least contract balance than total contribution", async function () {
+      const balance = await ethers.provider.getBalance(fundContract.address);
+      const proposal = await fundContract.proposals(0);
+      // This line is performing an assertion check to verify that the balance of the contract's address is greater than or equal to the proposal.totalContribution.
+      assert(balance.gte(proposal.totalContribution));
+    });
+
+    // it.only("Contract balance should be transferred to the creator", async function () {
+    //   const proposal = await fundContract.proposals(0);
+    //   await fundContract.transferContributionToCreator(0);
+    //   const creatorBalance = await ethers.provider.getBalance(proposal.caller);
+    //   assert.equal(creatorBalance.toString(), proposal.totalContribution.toString());
+    // });
+  });
+
+  describe("Get Balance", function () {
+    it.only("Should be zero inital contract balance", async function () {
+      const balance = await ethers.provider.getBalance(fundContract.address);
+      assert.equal(balance.toString(), "0");
     });
   });
 });
