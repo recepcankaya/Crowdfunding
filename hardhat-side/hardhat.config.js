@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-gas-reporter");
+require("solidity-coverage");
 require("dotenv").config({ path: ".env" });
 
 const ALCHEMY_RPC_URL = process.env.ALCHEMY_RPC_URL;
