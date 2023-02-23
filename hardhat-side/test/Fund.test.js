@@ -69,16 +69,6 @@ describe("Fund", function () {
         "Since you voted, you cannot vote again"
       );
     });
-
-    // it.only("Should set the voter true in proposal", async function () {
-    //   const [user] = await ethers.getSigner();
-    //   const initialVoterValue = await fundContract.proposals(0).voters[user.address];
-    //   assert.equal(initialVoterValue, false);
-
-    //   await fundContract.voteProposal(0, vote.YES);
-    //   const finalVoterValue = await fundContract.proposals(proposalIndex).voters[user.address];
-    //   assert.equal(finalVoterValue, true);
-    // });
   });
 
   describe("Contribute to the Contract", function () {
@@ -135,7 +125,7 @@ describe("Fund", function () {
       assert(balance.gte(proposal.totalContribution));
     });
 
-    it.only("Contract balance should be transferred to the creator", async function () {
+    it("Contract balance should be transferred to the creator", async function () {
       const proposal = await fundContract.proposals(0);
       await fundContract.transferContributionToCreator(0);
       const creatorBalance = await ethers.provider.getBalance(proposal.caller);
