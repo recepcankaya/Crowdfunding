@@ -13,7 +13,6 @@ export default function Form() {
         .max(100, "Must be 100 character or less!")
         .required("This field is required!"),
       requestedContribution: number()
-        .max(18, "Must be 18 character or less!")
         .required("This field is required!")
         .positive(),
     }),
