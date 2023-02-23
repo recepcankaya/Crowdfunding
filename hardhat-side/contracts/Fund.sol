@@ -29,23 +29,6 @@ contract Fund {
     mapping(uint256 => Proposal) public proposals;
     uint256 public proposalId;
 
-    // Create proposal
-    function createProposal(
-        string memory _description,
-        uint256 _requestedContribution
-    ) public returns (uint256) {
-        Proposal storage proposal = proposals[proposalId];
-        proposal.deadline = block.timestamp + 1 minutes;
-        proposal.requestedContribution = _requestedContribution;
-        proposal.isContributionEnded = false;
-        proposal.caller = msg.sender;
-        proposal.description = _description;
-        proposalId++;
-        // With function execution, the id is incremented. To find the correct id belongs to the proposal
-        // it is returned minus 1
-        return proposalId - 1;
-    }
-
     modifier activeProposal(uint256 proposalIndex) {
         require(
             block.timestamp < proposals[proposalIndex].deadline,
@@ -77,6 +60,23 @@ contract Fund {
             "You cannot contribute because the time has expired"
         );
         _;
+    }
+
+    // Create proposal
+    function createProposal(
+        string memory _description,
+        uint256 _requestedContribution
+    ) public returns (uint256) {
+        Proposal storage proposal = proposals[proposalId];
+        proposal.deadline = block.timestamp + 1 minutes;
+        proposal.requestedContribution = _requestedContribution;
+        proposal.isContributionEnded = false;
+        proposal.caller = msg.sender;
+        proposal.description = _description;
+        proposalId++;
+        // With function execution, the id is incremented. To find the correct id belongs to the proposal
+        // it is returned minus 1
+        return proposalId - 1;
     }
 
     function voteProposal(
