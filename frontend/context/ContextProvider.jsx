@@ -3,10 +3,6 @@ import { Contract, providers } from "ethers";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants/index";
 import Web3Modal from "web3modal";
 
-const contractInstance = (providerOrSigner) => {
-  return new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, providerOrSigner);
-};
-
 export const ContextAPI = createContext();
 
 export function ContextProvider({ children }) {
@@ -30,6 +26,16 @@ export function ContextProvider({ children }) {
     return web3Provider;
   };
 
+  const contractInstance = (providerOrSigner) => {
+    return new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, providerOrSigner);
+  };
+
+  // const getAddress = async () => {
+  //   const signer = await getProviderOrSigner(true);
+  //   const address = await signer.getAddress();
+  //   console.log(address);
+  // };
+
   const connectWallet = async () => {
     try {
       await getProviderOrSigner();
@@ -51,7 +57,13 @@ export function ContextProvider({ children }) {
   }, [walletConnected]);
 
   return (
-    <ContextAPI.Provider value={{ connectWallet, walletConnected }}>
+    <ContextAPI.Provider
+      value={{
+        connectWallet,
+        walletConnected,
+        contractInstance,
+        getProviderOrSigner,
+      }}>
       {children}
     </ContextAPI.Provider>
   );

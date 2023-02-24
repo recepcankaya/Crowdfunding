@@ -1,7 +1,22 @@
 import { useFormik } from "formik";
+import { useContext } from "react";
 import { object, string, number } from "yup";
+import { ContextAPI } from "../context/ContextProvider";
 
 export default function Form() {
+  const { contractInstance, getProviderOrSigner } = useContext(ContextAPI);
+
+  const handleCreateProposal = async (desc, amount) => {
+    try {
+      const signer = await getProviderOrSigner(true);
+      const contract = await contractInstance(signer);
+      const createProposal = await contract.createProposal(desc, amount);
+      await createProposal.wait();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       description: "",
@@ -17,7 +32,7 @@ export default function Form() {
         .positive(),
     }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      handleCreateProposal(values.description, values.requestedContribution);
     },
   });
 
