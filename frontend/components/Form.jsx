@@ -38,7 +38,7 @@ export default function Form() {
 
   return (
     <form
-      className="w-2/5 mx-auto mt-20 p-8 border-solid border-2 border-violet-600 rounded-lg"
+      className="w-2/5 mx-auto mt-20 p-8 border-solid border-2 border-violet-600 rounded-lg text-stone-300"
       onSubmit={formik.handleSubmit}>
       <div className="flex flex-col items-center">
         <div className="mb-6">
@@ -51,7 +51,7 @@ export default function Form() {
             name="description"
             onChange={formik.handleChange}
             value={formik.values.description}
-            className="w-1/2 h-8 mt-2 pl-2 border-solid border border-orange-600 rounded-md focus:outline-0"
+            className="w-1/2 h-8 mt-2 pl-2 border-solid border-2 border-orange-600 rounded-md focus:outline-0"
           />
           {formik.touched.description && formik.errors.description ? (
             <div className="w-1/2 mt-2 bg-red-600 rounded-lg text-white">
@@ -70,7 +70,7 @@ export default function Form() {
             name="requestedContribution"
             onChange={formik.handleChange}
             value={formik.values.requestedContribution}
-            className="w-1/2 h-8 mt-2 pl-2 border-solid border border-orange-600 rounded-md focus:outline-0"
+            className="w-1/2 h-8 mt-2 pl-2 border-solid border-2 border-orange-600 rounded-md focus:outline-0"
           />
           {formik.touched.requestedContribution &&
           formik.errors.requestedContribution ? (
