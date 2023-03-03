@@ -22,7 +22,7 @@ export function ContextProvider({ children }) {
 
     const { chainId } = await web3Provider.getNetwork()
     if (chainId !== 80001) {
-      // alert("Change the network to Mumbai")
+      alert("Change the network to Mumbai")
       throw new Error("Change the network to Mumbai")
     }
 

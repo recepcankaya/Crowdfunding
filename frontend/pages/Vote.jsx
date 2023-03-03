@@ -1,9 +1,6 @@
 import Head from "next/head"
 import { useContext, useEffect, useState } from "react"
-import { atom, useAtom } from "jotai"
 import { ContextAPI } from "../context/ContextProvider"
-
-const proposalsAtom = atom([])
 
 export default function Vote() {
   const [proposalArray, setProposalArray] = useState([])
@@ -19,11 +16,12 @@ export default function Vote() {
         try {
           const proposal = await contract.proposals(i)
           if (proposal.description) {
-            setProposalArray(proposal)
+            setProposalArray((proposals) => [...proposals, proposal])
           }
           i++
         } catch (error) {
           done = true
+          console.error(error)
         }
       }
     } catch (e) {
@@ -46,6 +44,11 @@ export default function Vote() {
             <h2 className="pt-2 text-xl text-stone-300 text-center decoration-solid underline underline-offset-4 decoration-orange-600">
               Open Proposals
             </h2>
+            {proposalArray.map((element, id) => (
+              <ul key={id} className="ml-8 mt-4 text-stone-300">
+                <li>{element[0]}</li>
+              </ul>
+            ))}
           </div>
         </section>
       </main>
