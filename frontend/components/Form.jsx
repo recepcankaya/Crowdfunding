@@ -1,21 +1,21 @@
-import { useFormik } from "formik";
-import { useContext } from "react";
-import { object, string, number } from "yup";
-import { ContextAPI } from "../context/ContextProvider";
+import { useFormik } from "formik"
+import { useContext } from "react"
+import { object, string, number } from "yup"
+import { ContextAPI } from "../context/ContextProvider"
 
 export default function Form() {
-  const { contractInstance, getProviderOrSigner } = useContext(ContextAPI);
+  const { contractInstance, getProviderOrSigner } = useContext(ContextAPI)
 
   const handleCreateProposal = async (desc, amount) => {
     try {
-      const signer = await getProviderOrSigner(true);
-      const contract = await contractInstance(signer);
-      const createProposal = await contract.createProposal(desc, amount);
-      await createProposal.wait();
+      const signer = await getProviderOrSigner(true)
+      const contract = await contractInstance(signer)
+      const createProposal = await contract.createProposal(desc, amount)
+      await createProposal.wait()
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -32,9 +32,9 @@ export default function Form() {
         .positive(),
     }),
     onSubmit: (values) => {
-      handleCreateProposal(values.description, values.requestedContribution);
+      handleCreateProposal(values.description, values.requestedContribution)
     },
-  });
+  })
 
   return (
     <form
@@ -51,7 +51,7 @@ export default function Form() {
             name="description"
             onChange={formik.handleChange}
             value={formik.values.description}
-            className="w-1/2 h-8 mt-2 pl-2 border-solid border-2 border-orange-600 rounded-md focus:outline-0"
+            className="w-1/2 h-8 mt-2 pl-2 text-black border-solid border-2 border-orange-600 rounded-md focus:outline-0"
           />
           {formik.touched.description && formik.errors.description ? (
             <div className="w-1/2 mt-2 bg-red-600 rounded-lg text-white">
@@ -70,7 +70,7 @@ export default function Form() {
             name="requestedContribution"
             onChange={formik.handleChange}
             value={formik.values.requestedContribution}
-            className="w-1/2 h-8 mt-2 pl-2 border-solid border-2 border-orange-600 rounded-md focus:outline-0"
+            className="w-1/2 h-8 mt-2 pl-2 text-black border-solid border-2 border-orange-600 rounded-md focus:outline-0"
           />
           {formik.touched.requestedContribution &&
           formik.errors.requestedContribution ? (
@@ -84,5 +84,5 @@ export default function Form() {
         </button>
       </div>
     </form>
-  );
+  )
 }

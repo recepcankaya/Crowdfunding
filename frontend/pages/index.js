@@ -1,5 +1,5 @@
-import Head from "next/head";
-import Form from "../components/Form";
+import Head from "next/head"
+import Form from "../components/Form"
 
 export default function Home() {
   return (
@@ -15,5 +15,5 @@ export default function Home() {
         <Form />
       </main>
     </>
-  );
+  )
 }

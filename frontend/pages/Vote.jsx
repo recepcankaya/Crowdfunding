@@ -4,14 +4,16 @@ import { ContextAPI } from "../context/ContextProvider"
 
 export default function Vote() {
   const [proposalArray, setProposalArray] = useState([])
+  const [openProposalArray, setOpenProposalArray] = useState([])
   const { contractInstance, getProviderOrSigner } = useContext(ContextAPI)
 
-  const getOpenProposals = async () => {
+  const getAllProposals = async () => {
     try {
       const provider = await getProviderOrSigner()
       const contract = await contractInstance(provider)
       let i = 0
       let done = false
+      setProposalArray([])
       while (!done) {
         try {
           const proposal = await contract.proposals(i)
@@ -29,7 +31,34 @@ export default function Vote() {
     }
   }
 
+  const getOpenProposals = async () => {
+    try {
+      const provider = await getProviderOrSigner()
+      const contract = await contractInstance(provider)
+      let i = 0
+      let done = false
+      setOpenProposalArray([])
+      while (!done) {
+        try {
+          const proposal = await contract.proposals(i)
+          if (proposal.deadline > Math.floor(Date.now() / 1000)) {
+            setOpenProposalArray((proposals) => [...proposals, proposal])
+          }
+          i++
+        } catch (error) {
+          done = true
+          console.error(error)
+        }
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  console.log(openProposalArray)
+
   useEffect(() => {
+    getAllProposals()
     getOpenProposals()
   }, [])
 
@@ -40,12 +69,24 @@ export default function Vote() {
       </Head>
       <main>
         <section>
-          <div className="w-2/5 h-48 border-solid border-2 border-violet-700 rounded-lg">
+          <div className="w-2/5 h-48 mt-10 ml-20 border-solid border-2 border-violet-700 rounded-lg">
             <h2 className="pt-2 text-xl text-stone-300 text-center decoration-solid underline underline-offset-4 decoration-orange-600">
               Open Proposals
             </h2>
+            {openProposalArray.map((element, id) => (
+              <ul key={id} className="ml-8 mt-4 text-stone-300 list-dic">
+                <li>{element[0]}</li>
+              </ul>
+            ))}
+          </div>
+        </section>
+        <section>
+          <div className="w-2/5 h-48 mt-10 ml-20 border-solid border-2 border-violet-700 rounded-lg">
+            <h2 className="pt-2 text-xl text-stone-300 text-center decoration-solid underline underline-offset-4 decoration-orange-600">
+              All Proposals
+            </h2>
             {proposalArray.map((element, id) => (
-              <ul key={id} className="ml-8 mt-4 text-stone-300">
+              <ul key={id} className="ml-8 mt-4 text-stone-300 list-dic">
                 <li>{element[0]}</li>
               </ul>
             ))}

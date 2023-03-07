@@ -8,7 +8,9 @@ export default function NavBar() {
   return (
     <nav className="bg-neutral-900 h-16">
       <div className="flex justify-between items-center mx-8">
-        <h1 className="text-2xl text-slate-200">Crowdfunding</h1>
+        <h1 className="text-2xl text-slate-200">
+          <Link href="/">Crowdfunding</Link>
+        </h1>
         <Link href="/Vote">
           <span className="text-white">Vote</span>
         </Link>
