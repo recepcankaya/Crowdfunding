@@ -31,6 +31,8 @@ export default function Vote() {
     }
   }
 
+  console.log(proposalArray)
+
   const getOpenProposals = async () => {
     try {
       const provider = await getProviderOrSigner()
@@ -41,6 +43,7 @@ export default function Vote() {
       while (!done) {
         try {
           const proposal = await contract.proposals(i)
+          console.log(proposal)
           if (proposal.deadline > Math.floor(Date.now() / 1000)) {
             setOpenProposalArray((proposals) => [...proposals, proposal])
           }
@@ -55,8 +58,6 @@ export default function Vote() {
     }
   }
 
-  console.log(openProposalArray)
-
   useEffect(() => {
     getAllProposals()
     getOpenProposals()
@@ -67,7 +68,7 @@ export default function Vote() {
       <Head>
         <title>Vote</title>
       </Head>
-      <main>
+      <main className="relative">
         <section>
           <div className="w-2/5 h-48 mt-10 ml-20 border-solid border-2 border-violet-700 rounded-lg">
             <h2 className="pt-2 text-xl text-stone-300 text-center decoration-solid underline underline-offset-4 decoration-orange-600">
@@ -75,14 +76,16 @@ export default function Vote() {
             </h2>
             {openProposalArray.map((element, id) => (
               <ul key={id} className="ml-8 mt-4 text-stone-300 list-dic">
-                <li>{element[0]}</li>
+                <li>
+                  {element[0]}: {element.requestedContribution.toString()}
+                </li>
               </ul>
             ))}
           </div>
         </section>
         <section>
-          <div className="w-2/5 h-48 mt-10 ml-20 border-solid border-2 border-violet-700 rounded-lg">
-            <h2 className="pt-2 text-xl text-stone-300 text-center decoration-solid underline underline-offset-4 decoration-orange-600">
+          <div className="w-2/5 h-auto overflow-auto pb-4 mt-10 ml-20 border-solid border-2 border-violet-700 rounded-lg">
+            <h2 className="pt-4 text-xl text-stone-300 text-center decoration-solid underline underline-offset-4 decoration-orange-600 ">
               All Proposals
             </h2>
             {proposalArray.map((element, id) => (
